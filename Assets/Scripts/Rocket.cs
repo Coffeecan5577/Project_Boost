@@ -10,11 +10,13 @@ public class Rocket : MonoBehaviour
     private bool _aKeyPressed;
     private bool _dKeyPresssed;
     private Rigidbody _rocketRB;
+    private AudioSource _audioSource;
 
 	// Use this for initialization
 	void Start ()
 	{
 	    _rocketRB = GetComponent<Rigidbody>();
+	    _audioSource = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -32,6 +34,15 @@ public class Rocket : MonoBehaviour
         if (_spaceKeyPressed)
         {
             _rocketRB.AddRelativeForce(new Vector3(0, rocketThrust, 0));
+            if (!_audioSource.isPlaying)// so it does not layer.
+            {
+                _audioSource.Play();
+            }
+        }
+            
+        else
+        {
+            _audioSource.Stop();
         }
 
         if (_aKeyPressed)
