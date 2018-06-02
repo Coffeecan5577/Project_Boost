@@ -31,19 +31,30 @@ public class Rocket : MonoBehaviour
         _aKeyPressed = Input.GetKey(KeyCode.A);
         _dKeyPresssed = Input.GetKey(KeyCode.D);
 
+        Thrust();
+        Rotate();
+    }
+
+    private void Thrust()
+    {
         if (_spaceKeyPressed)
         {
             _rocketRB.AddRelativeForce(new Vector3(0, rocketThrust, 0));
-            if (!_audioSource.isPlaying)// so it does not layer.
+            if (!_audioSource.isPlaying) // so it do
             {
                 _audioSource.Play();
             }
         }
-            
+
         else
         {
             _audioSource.Stop();
         }
+    }
+
+    private void Rotate()
+    {
+        _rocketRB.freezeRotation = true; // take manual control of rotation.
 
         if (_aKeyPressed)
         {
@@ -53,5 +64,8 @@ public class Rocket : MonoBehaviour
         {
             transform.Rotate(new Vector3(0, 0, -2), Space.World);
         }
+
+        _rocketRB.freezeRotation = false; // resume physics' control of rotation.
     }
+
 }
