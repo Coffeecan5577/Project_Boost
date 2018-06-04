@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Rocket : MonoBehaviour
 {
-    public float rocketThrust = 15f;
+    [SerializeField] float rcsThrust = 100f;
+    [SerializeField] float rocketThrust = 15f;
+
 
     private bool _spaceKeyPressed;
     private bool _aKeyPressed;
@@ -17,6 +19,7 @@ public class Rocket : MonoBehaviour
 	{
 	    _rocketRB = GetComponent<Rigidbody>();
 	    _audioSource = GetComponent<AudioSource>();
+	    _rocketRB.mass = 1;
 	}
 	
 	// Update is called once per frame
@@ -24,6 +27,30 @@ public class Rocket : MonoBehaviour
 	{
 	    ProcessInput();
 	}
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+            case "Friendly":
+            {
+                print("OK");
+            }
+            break;
+
+            case "Fuel":
+            {
+                // Future tag
+            }
+            break;
+
+            default:
+            {
+                print("dead");
+            }
+            break;
+        }
+    }
 
     private void ProcessInput()
     {
@@ -39,7 +66,7 @@ public class Rocket : MonoBehaviour
     {
         if (_spaceKeyPressed)
         {
-            _rocketRB.AddRelativeForce(new Vector3(0, rocketThrust, 0));
+            _rocketRB.AddRelativeForce(Vector3.up * rocketThrust);
             if (!_audioSource.isPlaying) // so it do
             {
                 _audioSource.Play();
@@ -55,14 +82,15 @@ public class Rocket : MonoBehaviour
     private void Rotate()
     {
         _rocketRB.freezeRotation = true; // take manual control of rotation.
+        float rotationThisFrame = Time.deltaTime * rcsThrust;
 
         if (_aKeyPressed)
         {
-            transform.Rotate(new Vector3(0, 0, 2), Space.World);
+            transform.Rotate(new Vector3(0, 0, 2 * rotationThisFrame), Space.World);
         }
         else if (_dKeyPresssed)
         {
-            transform.Rotate(new Vector3(0, 0, -2), Space.World);
+            transform.Rotate(new Vector3(0, 0, -2 * rotationThisFrame), Space.World);
         }
 
         _rocketRB.freezeRotation = false; // resume physics' control of rotation.

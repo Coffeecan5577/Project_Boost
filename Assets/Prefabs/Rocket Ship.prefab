@@ -476,7 +476,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0790eca79406c33418c599c8617b5cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rocketThrust: 10
+  rcsThrust: 100
+  rocketThrust: 50
 --- !u!135 &135271667450946166
 SphereCollider:
   m_ObjectHideFlags: 1
