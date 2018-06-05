@@ -7,6 +7,16 @@ public class Rocket : MonoBehaviour
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float rocketThrust = 15f;
 
+    private enum rocketStates
+    {
+        Alive,
+        Dying,
+        Transcending
+
+    };
+
+    private rocketStates _currentState = rocketStates.Alive;
+
 
     private bool _spaceKeyPressed;
     private bool _aKeyPressed;
@@ -20,16 +30,27 @@ public class Rocket : MonoBehaviour
 	    _rocketRB = GetComponent<Rigidbody>();
 	    _audioSource = GetComponent<AudioSource>();
 	    _rocketRB.mass = 1;
-	}
+}
 	
 	// Update is called once per frame
 	void Update ()
 	{
-	    ProcessInput();
+        //TODO stop sound on death
+	    if (_currentState == rocketStates.Alive)
+	    {
+            ProcessInput();
+        }
+	    
 	}
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (_currentState != rocketStates.Alive)
+        {
+            // ignore collisions
+            return;
+        }
+
         switch (collision.gameObject.tag)
         {
             case "Friendly":
@@ -40,19 +61,44 @@ public class Rocket : MonoBehaviour
 
             case "Finish":
             {
-                print("Finish");
-                SceneManager.LoadScene(1);
+                _currentState = rocketStates.Transcending;
+                Invoke("CheckLevelIndex", 1f); // parameterize time.
             }
             break;
 
             default:
             {
-                print("dead");
-                SceneManager.LoadScene(0);
+                print("Hit something deadly");
+                _currentState = rocketStates.Dying;
+                Invoke("ReloadCurrentLevel", 1f);
             }
             break;
         }
     }
+
+    private void ReloadCurrentLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private void CheckLevelIndex()
+    {
+        if (SceneManager.GetActiveScene().buildIndex < SceneManager.sceneCount)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
+        else
+        {
+            LoadFirstLevel();
+        }
+       
+    }
+
+    private void LoadFirstLevel()
+    {
+        SceneManager.LoadScene(0);
+    }
+
 
     private void ProcessInput()
     {
