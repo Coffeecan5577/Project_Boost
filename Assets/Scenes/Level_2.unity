@@ -398,7 +398,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1739675812597662, guid: c021a154faf3f7240b456acc056f4991, type: 2}
       propertyPath: m_Name
-      value: Launch Pad (1)
+      value: Launch Pad
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c021a154faf3f7240b456acc056f4991, type: 2}
