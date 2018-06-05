@@ -20,6 +20,7 @@ public class Rocket : MonoBehaviour
     private rocketStates _currentState = rocketStates.Alive;
 
 
+    private int _currentLevel;
     private bool _spaceKeyPressed;
     private bool _aKeyPressed;
     private bool _dKeyPresssed;
@@ -32,12 +33,12 @@ public class Rocket : MonoBehaviour
 	    _rocketRB = GetComponent<Rigidbody>();
 	    _audioSource = GetComponent<AudioSource>();
 	    _rocketRB.mass = 1;
-}
+        _currentLevel = SceneManager.GetActiveScene().buildIndex;
+    }
 	
 	// Update is called once per frame
 	void Update ()
 	{
-        //TODO stop sound on death
 	    if (_currentState == rocketStates.Alive)
 	    {
 	        ProcessInput();
@@ -93,14 +94,15 @@ public class Rocket : MonoBehaviour
 
     private void ReloadCurrentLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(_currentLevel);
     }
 
     private void CheckLevelIndex()
     {
-        if (SceneManager.GetActiveScene().buildIndex < SceneManager.sceneCount)
+        int levelCount = SceneManager.sceneCount;
+        if (_currentLevel < levelCount )
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            SceneManager.LoadScene(_currentLevel + 1);
         }
         else
         {
