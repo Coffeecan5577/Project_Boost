@@ -394,7 +394,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: c4487cd8fc461cf46b16cbce910e08b0, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.6
   m_Pitch: 0.7
@@ -478,6 +478,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rcsThrust: 100
   rocketThrust: 60
+  _mainEngine: {fileID: 8300000, guid: 7b9c8e55bebce79469da8695674e71ad, type: 3}
+  _rocketExplosion: {fileID: 8300000, guid: 9345e936598cb074a993e835f0d740d0, type: 3}
+  _levelComplete: {fileID: 8300000, guid: 28d6f602447d4f44eb66db8a5d481ef3, type: 3}
 --- !u!135 &135271667450946166
 SphereCollider:
   m_ObjectHideFlags: 1

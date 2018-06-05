@@ -3,9 +3,11 @@ using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
-    //TODO fix lighting bug.
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float rocketThrust = 15f;
+    [SerializeField] private AudioClip _mainEngine;
+    [SerializeField] private AudioClip _rocketExplosion;
+    [SerializeField] private AudioClip _levelComplete;
 
     private enum rocketStates
     {
@@ -38,8 +40,8 @@ public class Rocket : MonoBehaviour
         //TODO stop sound on death
 	    if (_currentState == rocketStates.Alive)
 	    {
-            ProcessInput();
-        }
+	        ProcessInput();
+	    }
 	    
 	}
 
@@ -55,25 +57,38 @@ public class Rocket : MonoBehaviour
         {
             case "Friendly":
             {
-                
+                // Do Nothing
             }
             break;
 
             case "Finish":
             {
-                _currentState = rocketStates.Transcending;
-                Invoke("CheckLevelIndex", 1f); // parameterize time.
+                StartSuccessSequence();
             }
             break;
 
             default:
             {
-                print("Hit something deadly");
-                _currentState = rocketStates.Dying;
-                Invoke("ReloadCurrentLevel", 1f);
+                StartDeathSequence();
             }
             break;
         }
+    }
+
+
+    private void StartSuccessSequence()
+    {
+        _currentState = rocketStates.Transcending;
+        _audioSource.PlayOneShot(_levelComplete);
+        Invoke("CheckLevelIndex", 2.5f); // parameterize time.
+    }
+
+    private void StartDeathSequence()
+    {
+        _currentState = rocketStates.Dying;
+        _audioSource.Stop();
+        _audioSource.PlayOneShot(_rocketExplosion);
+        Invoke("ReloadCurrentLevel", 1f);
     }
 
     private void ReloadCurrentLevel()
@@ -106,19 +121,15 @@ public class Rocket : MonoBehaviour
         _aKeyPressed = Input.GetKey(KeyCode.A);
         _dKeyPresssed = Input.GetKey(KeyCode.D);
 
-        Thrust();
-        Rotate();
+        RespondToThrustInput();
+        RespondToRotateInput();
     }
 
-    private void Thrust()
+    private void RespondToThrustInput()
     {
         if (_spaceKeyPressed)
         {
-            _rocketRB.AddRelativeForce(Vector3.up * rocketThrust);
-            if (!_audioSource.isPlaying) // so it do
-            {
-                _audioSource.Play();
-            }
+            ApplyThrust();
         }
 
         else
@@ -127,7 +138,16 @@ public class Rocket : MonoBehaviour
         }
     }
 
-    private void Rotate()
+    private void ApplyThrust()
+    {
+        _rocketRB.AddRelativeForce(Vector3.up * rocketThrust);
+        if (!_audioSource.isPlaying) 
+        {
+            _audioSource.PlayOneShot(_mainEngine);
+        }
+    }
+
+    private void RespondToRotateInput()
     {
         _rocketRB.freezeRotation = true; // take manual control of rotation.
         float rotationThisFrame = Time.deltaTime * rcsThrust;
