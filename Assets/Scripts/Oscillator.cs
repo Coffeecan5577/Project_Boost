@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = System.Random;
 
 [DisallowMultipleComponent] // Attribute
 public class Oscillator : MonoBehaviour
@@ -23,17 +25,26 @@ public class Oscillator : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-        // Set movement factor automatically
-        // TODO protect against the period being 0
+	    // Set movement factor automatically
+        // protect against the period being 0
 
-	    float cycles = Time.time / period; // grows continually from 0
-
-	    const float tau = Mathf.PI * 2; // tau is 2 * Pi.
-	    float rawSineWave = Mathf.Sin(cycles * tau);
-
-
-	    _movementFactor = rawSineWave / 2f + 0.5f;
-	    Vector3 offset = _movementFactor * _movementVector;
-	    transform.position = _startingPosition + offset;
+	    Oscillate();
 	}
+
+    private void Oscillate()
+    {
+        float cycles = Time.time / period; // grows continually from 0
+
+        const float tau = Mathf.PI * 2; // tau is 2 * Pi.
+        float rawSineWave = Mathf.Sin(cycles * tau);
+
+        if (period <= Mathf.Epsilon)
+        {
+            return;
+        }
+        
+        _movementFactor = rawSineWave / 2f + 0.5f;
+        Vector3 offset = _movementFactor * _movementVector;
+        transform.position = _startingPosition + offset;
+    }
 }

@@ -5,6 +5,8 @@ public class Rocket : MonoBehaviour
 {
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float rocketThrust = 15f;
+    [SerializeField] private float levelLoadDelay = 2.5f;
+
     [SerializeField] private AudioClip _mainEngine;
     [SerializeField] private AudioClip _rocketExplosion;
     [SerializeField] private AudioClip _levelComplete;
@@ -85,7 +87,7 @@ public class Rocket : MonoBehaviour
     {
         _currentState = rocketStates.Transcending;
         _audioSource.PlayOneShot(_levelComplete);
-        Invoke("CheckLevelIndex", 2.5f); // parameterize time.
+        Invoke("CheckLevelIndex", levelLoadDelay); // parameterize time.
         levelCompleteParticles.Play();
     }
 
@@ -95,7 +97,7 @@ public class Rocket : MonoBehaviour
         _audioSource.Stop();
         _audioSource.PlayOneShot(_rocketExplosion);
         rocketExplosionParticles.Play();
-        Invoke("ReloadCurrentLevel", 1f);
+        Invoke("ReloadCurrentLevel", levelLoadDelay);
     }
 
     private void ReloadCurrentLevel()
