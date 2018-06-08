@@ -1594,6 +1594,16 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114074129569298464, guid: acb3d9bdebbebeb45b6432143cd220d1,
+        type: 2}
+      propertyPath: rocketThrust
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 114074129569298464, guid: acb3d9bdebbebeb45b6432143cd220d1,
+        type: 2}
+      propertyPath: rcsThrust
+      value: 150
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: acb3d9bdebbebeb45b6432143cd220d1, type: 2}
   m_IsPrefabParent: 0
@@ -1757,7 +1767,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _movementVector: {x: 25, y: -0.7, z: 0}
-  _movementFactor: 0
+  period: 2
 --- !u!1001 &2111968357
 Prefab:
   m_ObjectHideFlags: 0
