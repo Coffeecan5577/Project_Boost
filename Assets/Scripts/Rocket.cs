@@ -9,6 +9,10 @@ public class Rocket : MonoBehaviour
     [SerializeField] private AudioClip _rocketExplosion;
     [SerializeField] private AudioClip _levelComplete;
 
+    [SerializeField] private ParticleSystem mainEngineParticles;
+    [SerializeField] private ParticleSystem rocketExplosionParticles;
+    [SerializeField] private ParticleSystem levelCompleteParticles;
+
     private enum rocketStates
     {
         Alive,
@@ -82,6 +86,7 @@ public class Rocket : MonoBehaviour
         _currentState = rocketStates.Transcending;
         _audioSource.PlayOneShot(_levelComplete);
         Invoke("CheckLevelIndex", 2.5f); // parameterize time.
+        levelCompleteParticles.Play();
     }
 
     private void StartDeathSequence()
@@ -89,6 +94,7 @@ public class Rocket : MonoBehaviour
         _currentState = rocketStates.Dying;
         _audioSource.Stop();
         _audioSource.PlayOneShot(_rocketExplosion);
+        rocketExplosionParticles.Play();
         Invoke("ReloadCurrentLevel", 1f);
     }
 
@@ -137,6 +143,7 @@ public class Rocket : MonoBehaviour
         else
         {
             _audioSource.Stop();
+            mainEngineParticles.Stop();
         }
     }
 
@@ -147,6 +154,7 @@ public class Rocket : MonoBehaviour
         {
             _audioSource.PlayOneShot(_mainEngine);
         }
+        mainEngineParticles.Play();
     }
 
     private void RespondToRotateInput()
