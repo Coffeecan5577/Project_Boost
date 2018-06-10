@@ -16,17 +16,6 @@ public class Rocket : MonoBehaviour
     [SerializeField] private ParticleSystem rocketExplosionParticles;
     [SerializeField] private ParticleSystem levelCompleteParticles;
 
-    private enum rocketStates
-    {
-        Alive,
-        Dying,
-        Transcending
-
-    };
-
-    private rocketStates _currentState = rocketStates.Alive;
-
-
     private int _currentLevel;
     private bool _spaceKeyPressed;
     private bool _aKeyPressed;
@@ -34,8 +23,9 @@ public class Rocket : MonoBehaviour
     private bool _lKeyPressed;
     private bool _cKeyPressed;
     private bool _collisionsDisabled = false;
+    private bool isTransitioning = false;
+
     private Rigidbody _rocketRB;
-    private Collider _rocketCollider;
     private AudioSource _audioSource;
 
 	// Use this for initialization
@@ -51,7 +41,7 @@ public class Rocket : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-	    if (_currentState == rocketStates.Alive)
+	    if (!isTransitioning)
 	    {
 	        ProcessInput();
 	    }
@@ -79,7 +69,7 @@ public class Rocket : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (_currentState != rocketStates.Alive || _collisionsDisabled)
+        if (isTransitioning || _collisionsDisabled)
         {
             // ignore collisions
             return;
@@ -110,7 +100,7 @@ public class Rocket : MonoBehaviour
 
     private void StartSuccessSequence()
     {
-        _currentState = rocketStates.Transcending;
+        isTransitioning = true;
         _audioSource.PlayOneShot(_levelComplete);
         Invoke("CheckLevelIndex", levelLoadDelay); // parameterize time.
         levelCompleteParticles.Play();
@@ -118,7 +108,7 @@ public class Rocket : MonoBehaviour
 
     private void StartDeathSequence()
     {
-        _currentState = rocketStates.Dying;
+        isTransitioning = true;
         _audioSource.Stop();
         _audioSource.PlayOneShot(_rocketExplosion);
         rocketExplosionParticles.Play();
@@ -170,9 +160,14 @@ public class Rocket : MonoBehaviour
 
         else
         {
-            _audioSource.Stop();
-            mainEngineParticles.Stop();
+            StopApplyingThrust();
         }
+    }
+
+    private void StopApplyingThrust()
+    {
+        _audioSource.Stop();
+        mainEngineParticles.Stop();
     }
 
     private void ApplyThrust()
@@ -187,7 +182,7 @@ public class Rocket : MonoBehaviour
 
     private void RespondToRotateInput()
     {
-        _rocketRB.freezeRotation = true; // take manual control of rotation.
+       _rocketRB.angularVelocity = Vector3.zero; // remove rotation due to physics.
         float rotationThisFrame = Time.deltaTime * rcsThrust;
 
         if (_aKeyPressed)
@@ -199,7 +194,7 @@ public class Rocket : MonoBehaviour
             transform.Rotate(new Vector3(0, 0, -2 * rotationThisFrame), Space.World);
         }
 
-        _rocketRB.freezeRotation = false; // resume physics' control of rotation.
+        
     }
 
     private void LoadLevelThroughDebug()
