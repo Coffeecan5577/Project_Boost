@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Security.Cryptography;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
@@ -30,13 +31,18 @@ public class Rocket : MonoBehaviour
     private bool _spaceKeyPressed;
     private bool _aKeyPressed;
     private bool _dKeyPresssed;
+    private bool _lKeyPressed;
+    private bool _cKeyPressed;
+    private bool _collisionsDisabled = false;
     private Rigidbody _rocketRB;
+    private Collider _rocketCollider;
     private AudioSource _audioSource;
 
 	// Use this for initialization
 	void Start ()
 	{
 	    _rocketRB = GetComponent<Rigidbody>();
+	    _rocketCollider = GetComponent<Collider>();
 	    _audioSource = GetComponent<AudioSource>();
 	    _rocketRB.mass = 1;
         _currentLevel = SceneManager.GetActiveScene().buildIndex;
@@ -49,12 +55,31 @@ public class Rocket : MonoBehaviour
 	    {
 	        ProcessInput();
 	    }
-	    
+
+	    if (Debug.isDebugBuild)
+	    {
+	        RespondToDebugKeys();
+	    }
 	}
+
+    private void RespondToDebugKeys()
+    {
+        _lKeyPressed = Input.GetKeyDown(KeyCode.L);
+        if (_lKeyPressed)
+        {
+            LoadLevelThroughDebug();
+        }
+
+        _cKeyPressed = Input.GetKeyDown(KeyCode.C);
+        if (_cKeyPressed)
+        {
+            _collisionsDisabled = !_collisionsDisabled;
+        }
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (_currentState != rocketStates.Alive)
+        if (_currentState != rocketStates.Alive || _collisionsDisabled)
         {
             // ignore collisions
             return;
@@ -108,10 +133,11 @@ public class Rocket : MonoBehaviour
     private void CheckLevelIndex()
     {
         int levelCount = SceneManager.sceneCount;
-        if (_currentLevel < levelCount )
+        if (_currentLevel < levelCount)
         {
             SceneManager.LoadScene(_currentLevel + 1);
         }
+        
         else
         {
             LoadFirstLevel();
@@ -174,6 +200,20 @@ public class Rocket : MonoBehaviour
         }
 
         _rocketRB.freezeRotation = false; // resume physics' control of rotation.
+    }
+
+    private void LoadLevelThroughDebug()
+    {
+        int levelCount = SceneManager.sceneCount;
+        if (_currentLevel < levelCount)
+        {
+            SceneManager.LoadScene(_currentLevel + 1);
+        }
+
+        else
+        {
+            LoadFirstLevel();
+        }
     }
 
 }
