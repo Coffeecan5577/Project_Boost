@@ -32,7 +32,6 @@ public class Rocket : MonoBehaviour
 	void Start ()
 	{
 	    _rocketRB = GetComponent<Rigidbody>();
-	    _rocketCollider = GetComponent<Collider>();
 	    _audioSource = GetComponent<AudioSource>();
 	    _rocketRB.mass = 1;
         _currentLevel = SceneManager.GetActiveScene().buildIndex;
